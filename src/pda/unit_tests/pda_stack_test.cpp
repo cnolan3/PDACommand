@@ -38,6 +38,8 @@ TEST_F(pdaStackTest, pop_empty) {
 TEST_F(pdaStackTest, push_pop_empty) {
     PDAStack s;
     s.push('A');
+    s.push('B');
+    s.pop();
     s.pop();
 
     EXPECT_THAT(s.pop(), Eq(0));

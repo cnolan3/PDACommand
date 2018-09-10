@@ -1,6 +1,6 @@
 # Author: Connor Nolan
 
-set(sources pda.cpp pda_stack.cpp)
+set(sources pda.cpp pda_stack.cpp trans_func.cpp)
 
 add_library(pda_lib ${sources})
 
