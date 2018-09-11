@@ -29,6 +29,19 @@ PDAStack::~PDAStack() {
 }
 
 /**
+ * clear the stack
+**/
+void PDAStack::clear() {
+    node* tmp;
+
+    while(m_top != nullptr) {
+        tmp = m_top;
+        m_top = m_top->next;
+        delete tmp;
+    }   
+}
+
+/**
  * Push a character onto the top of the stack.
  *
  * @param    c new character to push

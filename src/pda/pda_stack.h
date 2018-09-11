@@ -17,6 +17,7 @@ public:
     PDAStack();
     ~PDAStack();
 
+    void clear();
     void push(char c);
     char pop();
     bool is_empty();
