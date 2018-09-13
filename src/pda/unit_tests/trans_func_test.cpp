@@ -98,3 +98,23 @@ TEST_F(tFuncTest, set_reset) {
     EXPECT_THAT(nState, Eq(0));
     EXPECT_THAT(push, Eq("bb"));
 }
+
+/**
+ * test clear function
+**/
+TEST_F(tFuncTest, clear) {
+    tFunc t(3);
+
+    t.setTrans(0, 'a', 't', 1, "aa");
+    t.setTrans(2, 'b', 'f', 0, "bb");
+
+    t.clear();
+
+    int nState;
+    std::string push;
+
+    t.getTrans(0, 'a', 't', nState, push);
+
+    EXPECT_THAT(nState, Eq(-1));
+    EXPECT_THAT(push, Eq(""));
+}

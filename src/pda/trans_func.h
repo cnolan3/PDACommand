@@ -21,6 +21,7 @@ public:
 
     void setTrans(int state, char input, char stack, int nState, std::string push);
     void getTrans(int state, char input, char stack, int& nState, std::string& push);
+    void clear();
 private:
     
     struct move

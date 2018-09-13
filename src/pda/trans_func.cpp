@@ -62,3 +62,20 @@ void tFunc::getTrans(int state, char input, char stack, int& nState, std::string
     nState = tmp->nState;
     push = tmp->push;
 }
+
+/**
+ * clear all transitions
+**/
+void tFunc::clear() {
+    delete[] m_trans;
+
+    m_trans = new move[m_numStates * 255 * 255];
+
+    move* tmp;
+    for(int i = 0; i < (m_numStates * 255 * 255); i++) {
+        tmp = &m_trans[i];
+
+        tmp->nState = -1;
+        tmp->push = "";
+    }
+}

@@ -1,10 +1,9 @@
 #include <iostream>
-
-using namespace std;
+#include <vector>
+#include <utility>
+#include "pda/pda.h"
 
 int main() {
-
-    cout << "test" << endl;
 
     return 0;
 }

@@ -8,9 +8,7 @@
 
 #include "pda.h"
 
-// define special symbols
-#define INIT_SYM 1
-#define EMPTY_SYM 2
+#include <iostream>
 
 /**
  * PDA constructor
@@ -20,7 +18,7 @@
  * @param    endStates vector of accptance states
 **/
 PDA::PDA(int numStates, std::vector<rule> rules, std::vector<int> endStates) 
-    : m_numStates(numStates), m_state(0)
+    : m_numStates(numStates), m_state(0), m_line("")
 {
     // create acceptance states list, 1 if acceptance, 0 if not
     m_endStates = new char[m_numStates];
@@ -45,23 +43,36 @@ PDA::PDA(int numStates, std::vector<rule> rules, std::vector<int> endStates)
 }
 
 /**
- * step through next character in PDA
+ * step through next character in PDA. returns the matched string
+ * and the id of the acceptance state if the string is matched, 
+ * returns -1 as the state id if not matched.
  *
  * @param    next next character
  *
- * @return   status of PDA after character
+ * @return   pair containing the matched string and
+ *           the acceptance state number.
 **/
-int PDA::step(char next) {
+std::pair<std::string, int> PDA::step(char next) {
     int nState;
     std::string push;
+
+    m_line += next;
 
     m_tFunc->getTrans(m_state, next, m_stack.pop(), nState, push);
 
     m_state = nState;
 
     for(int i = push.length() - 1; i >= 0; i--) {
-        m_stack.push(push[i]);
+        if(push[i] != EMPTY_SYM)
+            m_stack.push(push[i]);
     }
+
+    std::pair<std::string, int> p(m_line, -1);
+
+    if(m_endStates[m_state])
+        p.second = m_state;
+
+    return p;
 }
 
 /**
@@ -72,4 +83,15 @@ void PDA::reset() {
     m_stack.push(INIT_SYM);
 
     m_state = 0;
+
+    m_line = "";
+}
+
+/**
+ * reset and clear transition function rules
+**/
+void PDA::clear() {
+    this->reset();
+
+    m_tFunc->clear();
 }

@@ -12,7 +12,13 @@
 #ifndef __PDA_H__
 #define __PDA_H__
 
+// define special symbols
+#define INIT_SYM 1
+#define EMPTY_SYM 2
+
 #include <vector>
+#include <string>
+#include <utility>
 #include "pda_stack.h"
 #include "trans_func.h"
 
@@ -30,9 +36,11 @@ class PDA
 public:
     PDA(int numStates, std::vector<rule> rules, std::vector<int> endStates);
 
-    int step(char next);
+    std::pair<std::string, int> step(char next);
     void reset();
+    void clear();
 private:
+    std::string m_line;
     int m_numStates;
     int m_state;
     char* m_endStates;
