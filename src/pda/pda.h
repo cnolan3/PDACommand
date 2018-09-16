@@ -22,28 +22,33 @@
 #include "pda_stack.h"
 #include "trans_func.h"
 
+using std::string;
+using std::vector;
+using std::pair;
+
 struct rule
 {
     int state;
     char input;
     char stackSym;
     int nState;
-    std::string pushSym;
+    string pushSym;
 };
 
 class PDA
 {
 public:
-    PDA(int numStates, std::vector<rule> rules, std::vector<int> endStates);
+    PDA(int numStates, vector<rule> rules, vector<int> endStates);
 
-    std::pair<std::string, int> step(char next);
-    void reset();
-    void clear();
+    vector<pair<string, int> > run(string input);
 private:
-    std::string m_line;
+
+    pair<string, int> run_rec(int& curChar, string curString, int state);
+
     int m_numStates;
     int m_state;
     char* m_endStates;
+    string m_input;
     PDAStack m_stack;
     tFunc* m_tFunc;
 };
