@@ -11,6 +11,7 @@
 
 using std::cout;
 using std::endl;
+using std::vector;
 
 /**
  * tFunc constructor, create 3d transition table
@@ -20,15 +21,7 @@ using std::endl;
 tFunc::tFunc(int numStates) 
     : m_numStates(numStates)
 {
-    m_trans = new move[numStates * 255 * 255];
-
-    move* tmp;
-    for(int i = 0; i < (numStates * 255 * 255); i++) {
-        tmp = &m_trans[i];
-
-        tmp->nState = -1;
-        tmp->push = "";
-    }
+    m_trans = new vector<move>[numStates * 255 * 255];
 }
 
 /**
@@ -41,26 +34,26 @@ tFunc::tFunc(int numStates)
  * @param    push characters to be pushed onto the stack
 **/
 void tFunc::setTrans(int state, char input, char stack, int nState, std::string push) {
-    move* tmp = &m_trans[state + ((int)input * m_numStates) + ((int)stack * m_numStates * 255)];
+    move tmp;
 
-    tmp->nState = nState;
-    tmp->push = push;
+    tmp.nState = nState;
+    tmp.push = push;
+
+    m_trans[state + ((int)input * m_numStates) + ((int)stack * m_numStates * 255)].push_back(tmp);
 }
 
 /**
- * get the transition value for a given current state, input and top of stack
+ * get the transition values for a given current state, input and top of stack
  *
  * @param    state current state
  * @param    input input value
  * @param    stack value at top of stack
- * @param    nState reference to next state value
- * @param    push reference to value to push onto stack
+ *
+ * @return   vector of moves that correspond to the current state, input and
+ *           top of stack
 **/
-void tFunc::getTrans(int state, char input, char stack, int& nState, std::string& push) {
-    move* tmp = &m_trans[state + ((int)input * m_numStates) + ((int)stack * m_numStates * 255)];
-
-    nState = tmp->nState;
-    push = tmp->push;
+const vector<move>& tFunc::getTrans(int state, char input, char stack) {
+    return m_trans[state + ((int)input * m_numStates) + ((int)stack * m_numStates * 255)];
 }
 
 /**
@@ -69,13 +62,5 @@ void tFunc::getTrans(int state, char input, char stack, int& nState, std::string
 void tFunc::clear() {
     delete[] m_trans;
 
-    m_trans = new move[m_numStates * 255 * 255];
-
-    move* tmp;
-    for(int i = 0; i < (m_numStates * 255 * 255); i++) {
-        tmp = &m_trans[i];
-
-        tmp->nState = -1;
-        tmp->push = "";
-    }
+    m_trans = new vector<move>[m_numStates * 255 * 255];
 }

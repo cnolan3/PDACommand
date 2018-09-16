@@ -12,6 +12,8 @@ protected:
     pdaStackTest() {}
     ~pdaStackTest() {}
 
+    PDAStack s;
+
     virtual void SetUp() {}
     virtual void TearDown() {}
 };
@@ -29,7 +31,7 @@ TEST_F(pdaStackTest, is_empty) {
  * test the is_empty function
 **/
 TEST_F(pdaStackTest, is_not_empty) {
-    PDAStack s;
+    //PDAStack s;
     s.push('A');
 
     EXPECT_THAT(s.is_empty(), Eq(false));
@@ -39,7 +41,7 @@ TEST_F(pdaStackTest, is_not_empty) {
  * test popping an empty stack
 **/
 TEST_F(pdaStackTest, pop_empty) {
-    PDAStack s;
+    //PDAStack s;
 
     EXPECT_THAT(s.pop(), Eq(0));
 }
@@ -49,7 +51,7 @@ TEST_F(pdaStackTest, pop_empty) {
  * empty stack
 **/
 TEST_F(pdaStackTest, push_pop_empty) {
-    PDAStack s;
+    //PDAStack s;
     s.push('A');
     s.push('B');
     s.pop();
@@ -62,7 +64,7 @@ TEST_F(pdaStackTest, push_pop_empty) {
  * test pushing and the popping
 **/
 TEST_F(pdaStackTest, push_pop) {
-    PDAStack s;
+    //PDAStack s;
     s.push('A');
 
     EXPECT_THAT(s.pop(), Eq('A'));
@@ -72,7 +74,7 @@ TEST_F(pdaStackTest, push_pop) {
  * test pushing  multiple times
 **/
 TEST_F(pdaStackTest, multi_push) {
-    PDAStack s;
+    //PDAStack s;
     s.push('A');
     s.push('B');
     s.push('C');
@@ -88,7 +90,7 @@ TEST_F(pdaStackTest, multi_push) {
  * test pushing  multiple times and the popping
 **/
 TEST_F(pdaStackTest, multi_push_pop) {
-    PDAStack s;
+    //PDAStack s;
     s.push('A');
     s.push('B');
     s.push('C');
@@ -103,7 +105,7 @@ TEST_F(pdaStackTest, multi_push_pop) {
  * test clear function
 **/
 TEST_F(pdaStackTest, clear) {
-    PDAStack s;
+    //PDAStack s;
     s.push('A');
     s.push('B');
     s.push('C');

@@ -1,8 +1,10 @@
 #include "../trans_func.h"
 
+#include <vector>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+using std::vector;
 using ::testing::Eq;
 using ::testing::Test;
 
@@ -12,7 +14,18 @@ protected:
     tFuncTest() {}
     ~tFuncTest() {}
 
-    virtual void SetUp() {}
+    tFunc* t;
+    vector<move> v;
+
+    virtual void SetUp() {
+        t = new tFunc(3); 
+
+        t->setTrans(0, 'a', 't', 1, "aa");
+        t->setTrans(0, 'a', 't', 2, "bb");
+        t->setTrans(2, 'c', 'd', 0, "G");
+        t->setTrans(2, 'c', 'e', 1, "F");
+    }
+
     virtual void TearDown() {}
 };
 
@@ -20,101 +33,37 @@ protected:
  * test that moves are set correctly
 **/
 TEST_F(tFuncTest, set_get) {
-    tFunc t(3);
 
-    t.setTrans(0, 'a', 't', 1, "aa");
+    v = t->getTrans(2, 'c', 'd');
 
-    int nState;
-    std::string push;
-
-    t.getTrans(0, 'a', 't', nState, push);
-
-    EXPECT_THAT(nState, Eq(1));
-    EXPECT_THAT(push, Eq("aa"));
-
+    EXPECT_THAT(v.size(), Eq(1));
+    EXPECT_THAT(v[0].nState, Eq(0));
+    EXPECT_THAT(v[0].push, Eq("G"));
 }
 
 /**
- * test for correct multiple sets and gets
+ * test adding multiple moves to one transition
 **/
-TEST_F(tFuncTest, set_get_multi) {
-    tFunc t(3);
+TEST_F(tFuncTest, set_mult_one_trans) {
 
-    t.setTrans(0, 'a', 't', 1, "aa");
-    t.setTrans(2, 'c', 'e', 0, "a");
-    t.setTrans(1, 'a', 'e', 2, "bb");
+    v = t->getTrans(0, 'a', 't');
 
-    int nState;
-    std::string push;
+    EXPECT_THAT(v.size(), Eq(2));
+    EXPECT_THAT(v[0].nState, Eq(1));
+    EXPECT_THAT(v[0].push, Eq("aa"));
 
-    t.getTrans(0, 'a', 't', nState, push);
-
-    EXPECT_THAT(nState, Eq(1));
-    EXPECT_THAT(push, Eq("aa"));   
-
-    t.getTrans(1, 'a', 'e', nState, push);
-
-    EXPECT_THAT(nState, Eq(2));
-    EXPECT_THAT(push, Eq("bb"));
+    EXPECT_THAT(v[1].nState, Eq(2));
+    EXPECT_THAT(v[1].push, Eq("bb"));
 }
 
 /**
- * test for getting an empty move
+ * test the clear function
 **/
-TEST_F(tFuncTest, get_null) {
-    tFunc t(3);
+TEST_F(tFuncTest, set_clear) {
 
-    int nState;
-    std::string push;
+    t->clear();
 
-    t.getTrans(0, 'a', 't', nState, push);
+    v = t->getTrans(0, 'a', 't');
 
-    EXPECT_THAT(nState, Eq(-1));
-    EXPECT_THAT(push, Eq(""));
-}
-
-/**
- * test setting a move that's already been set
-**/
-TEST_F(tFuncTest, set_reset) {
-    tFunc t(3);
-
-    // first set
-    t.setTrans(0, 'a', 't', 1, "aa");
-
-    int nState;
-    std::string push;
-
-    t.getTrans(0, 'a', 't', nState, push);
-
-    EXPECT_THAT(nState, Eq(1));
-    EXPECT_THAT(push, Eq("aa"));
-
-    // reset
-    t.setTrans(0, 'a', 't', 0, "bb");
-
-    t.getTrans(0, 'a', 't', nState, push);
-
-    EXPECT_THAT(nState, Eq(0));
-    EXPECT_THAT(push, Eq("bb"));
-}
-
-/**
- * test clear function
-**/
-TEST_F(tFuncTest, clear) {
-    tFunc t(3);
-
-    t.setTrans(0, 'a', 't', 1, "aa");
-    t.setTrans(2, 'b', 'f', 0, "bb");
-
-    t.clear();
-
-    int nState;
-    std::string push;
-
-    t.getTrans(0, 'a', 't', nState, push);
-
-    EXPECT_THAT(nState, Eq(-1));
-    EXPECT_THAT(push, Eq(""));
+    EXPECT_THAT(v.size(), Eq(0));
 }

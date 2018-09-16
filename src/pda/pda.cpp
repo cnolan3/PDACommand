@@ -58,7 +58,7 @@ std::pair<std::string, int> PDA::step(char next) {
 
     m_line += next;
 
-    m_tFunc->getTrans(m_state, next, m_stack.pop(), nState, push);
+    //m_tFunc->getTrans(m_state, next, m_stack.pop(), nState, push);
 
     m_state = nState;
 

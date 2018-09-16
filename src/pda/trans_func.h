@@ -13,6 +13,13 @@
 #define __TRANS_FUNC_H__
 
 #include <string>
+#include <vector>
+    
+struct move
+{
+    int nState;
+    std::string push;
+};
 
 class tFunc
 {
@@ -20,18 +27,12 @@ public:
     tFunc(int numStates);
 
     void setTrans(int state, char input, char stack, int nState, std::string push);
-    void getTrans(int state, char input, char stack, int& nState, std::string& push);
+    const std::vector<move>& getTrans(int state, char input, char stack);
     void clear();
 private:
-    
-    struct move
-    {
-        int nState;
-        std::string push;
-    };
 
     int m_numStates;
-    move* m_trans;
+    std::vector<move>* m_trans;
 };
 
 #endif
