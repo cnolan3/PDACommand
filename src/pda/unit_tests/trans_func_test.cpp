@@ -36,9 +36,9 @@ TEST_F(tFuncTest, set_get) {
 
     v = t->getTrans(2, 'c', 'd');
 
-    EXPECT_THAT(v.size(), Eq(1));
-    EXPECT_THAT(v[0].nState, Eq(0));
-    EXPECT_THAT(v[0].push, Eq("G"));
+    EXPECT_EQ(v.size(), 1);
+    EXPECT_EQ(v[0].nState, 0);
+    EXPECT_EQ(v[0].push, "G");
 }
 
 /**
@@ -48,12 +48,12 @@ TEST_F(tFuncTest, set_mult_one_trans) {
 
     v = t->getTrans(0, 'a', 't');
 
-    EXPECT_THAT(v.size(), Eq(2));
-    EXPECT_THAT(v[0].nState, Eq(1));
-    EXPECT_THAT(v[0].push, Eq("aa"));
+    EXPECT_EQ(v.size(), 2);
+    EXPECT_EQ(v[0].nState, 1);
+    EXPECT_EQ(v[0].push, "aa");
 
-    EXPECT_THAT(v[1].nState, Eq(2));
-    EXPECT_THAT(v[1].push, Eq("bb"));
+    EXPECT_EQ(v[1].nState, 2);
+    EXPECT_EQ(v[1].push, "bb");
 }
 
 /**
@@ -65,5 +65,5 @@ TEST_F(tFuncTest, set_clear) {
 
     v = t->getTrans(0, 'a', 't');
 
-    EXPECT_THAT(v.size(), Eq(0));
+    EXPECT_EQ(v.size(), 0);
 }
