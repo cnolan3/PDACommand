@@ -4,7 +4,10 @@
  * @brief   Pushdown automata object declaration. Creates states from 0 - numStates
  *          rather than taking a defined list of states, state 0 is always the
  *          initial state. All ascii characters are valid symbols for input and the
- *          stack.
+ *          stack. Initial stack symbol is not pushed onto the stack by default, and
+ *          the first state, state 0, cannot be an acceptence state. Acceptence 
+ *          states are defined by finding the initial symbol at the top of the stack, 
+ *          therefore, acceptence states do not need to be explicitely defined.
  *
  * @author  Connor Nolan
 **/
@@ -38,7 +41,7 @@ struct rule
 class PDA
 {
 public:
-    PDA(int numStates, vector<rule> rules, vector<int> endStates);
+    PDA(int numStates, vector<rule> rules);
 
     vector<pair<string, int> > run(string input);
 private:
@@ -46,8 +49,6 @@ private:
     pair<string, int> run_rec(int& curChar, string curString, int state);
 
     int m_numStates;
-    int m_state;
-    char* m_endStates;
     string m_input;
     PDAStack m_stack;
     tFunc* m_tFunc;

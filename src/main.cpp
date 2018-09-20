@@ -10,52 +10,8 @@ int main() {
 
     rule r;
     vector<rule> rules;
-    vector<int> end;
 
-    r.state = 0;
-    r.input = 'a';
-    r.stackSym = EMPTY_SYM;
-    r.nState = 1;
-    r.pushSym = 'a';
-    r.pushSym += INIT_SYM;
-
-    rules.push_back(r);
-
-    r.state = 1;
-    r.input = 'a';
-    r.stackSym = EMPTY_SYM;
-    r.nState = 1;
-    r.pushSym = "a";
-
-    rules.push_back(r);
-
-    r.state = 1;
-    r.input = EMPTY_SYM;
-    r.stackSym = EMPTY_SYM;
-    r.nState = 2;
-    r.pushSym = EMPTY_SYM;
-
-    rules.push_back(r);
-
-    r.state = 2;
-    r.input = 'b';
-    r.stackSym = 'a';
-    r.nState = 2;
-    r.pushSym = EMPTY_SYM;
-
-    rules.push_back(r);
-
-    r.state = 2;
-    r.input = EMPTY_SYM;
-    r.stackSym = INIT_SYM;
-    r.nState = 3;
-    r.pushSym = EMPTY_SYM;
-
-    rules.push_back(r);
-
-    end.push_back(3);
-
-    PDA p(4, rules, end);
+    PDA p(4, rules);
 
     vector<pair<string, int> > out;
 

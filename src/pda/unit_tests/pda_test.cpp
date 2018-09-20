@@ -20,13 +20,12 @@ protected:
     virtual void SetUp() {
         rule r;
         vector<rule> rules;
-        vector<int> end;
 
         r.state = 0;
         r.input = 'a';
         r.stackSym = EMPTY_SYM;
         r.nState = 1;
-        r.pushSym = 'a';
+        r.pushSym = "a";
         r.pushSym += INIT_SYM;
 
         rules.push_back(r);
@@ -59,13 +58,11 @@ protected:
         r.input = EMPTY_SYM;
         r.stackSym = INIT_SYM;
         r.nState = 3;
-        r.pushSym = INIT_SYM;
+        r.pushSym = EMPTY_SYM;
 
         rules.push_back(r);
 
-        end.push_back(3);
-
-        p = new PDA(4, rules, end);
+        p = new PDA(4, rules);
     }
     virtual void TearDown() {}
 };

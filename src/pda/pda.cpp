@@ -7,32 +7,16 @@
 **/
 
 #include "pda.h"
-#include <iostream>
-
-using std::cout;
-using std::endl;
 
 /**
  * PDA constructor
  *
  * @param    numStates number of states in PDA
  * @param    rules vector of transition function rules
- * @param    endStates vector of accptance states
 **/
-PDA::PDA(int numStates, vector<rule> rules, vector<int> endStates) 
-    : m_numStates(numStates), m_state(0)
+PDA::PDA(int numStates, vector<rule> rules) 
+    : m_numStates(numStates)
 {
-    // create acceptance states list, 1 if acceptance, 0 if not
-    m_endStates = new char[m_numStates];
-
-    for(int i = 0; i < m_numStates; i++) {
-        m_endStates[i] = 0;
-    }
-
-    for(int i = 0; i < endStates.size(); i++) {
-        m_endStates[endStates[i]] = 1;
-    }
-
     // create transition functions
     m_tFunc = new tFunc(m_numStates);
 
@@ -42,9 +26,9 @@ PDA::PDA(int numStates, vector<rule> rules, vector<int> endStates)
 }
 
 /**
- * Recursively run the PDA on an input string, returns a list
- * of matchedstrings and the acceptence states that matched them,
- * in the order that they appear in the input string.
+ * Run the PDA on an input string, returns a list of matched
+ * strings and the acceptence states that matched them, in the
+ * order that they appear in the input string.
  *
  * @param    input input string
  *
@@ -66,19 +50,19 @@ vector<pair<string, int> > PDA::run(string input) {
     return ret;
 }
 
+/**
+ * Recursively match strings in the input string.
+ *
+ * @param    curChar reference to index of current character in input string
+ * @param    curString current string trying to be matched
+ * @param    state id of current state
+ *
+ * @return   pair of matched string and matched state
+**/
 pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
 
     pair<string, int> ret;
-    ret.second = -2;
     char top;
-
-    // return success if acceptence state is reached
-    if(m_endStates[state]) {
-        pair<string, int> ret;
-        ret.first = curString;
-        ret.second = state;
-        return ret;
-    }
 
     // return fail state if past end of input string
     if(curChar > m_input.length()) {
@@ -122,7 +106,14 @@ pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
             if(mv[i].push[j] != EMPTY_SYM)
                 m_stack.push(mv[i].push[j]);
         }
-        
+
+        // return success if acceptence state is reached
+        if(top == INIT_SYM) {
+            ret.first = curString;
+            ret.second = mv[i].nState;
+            return ret;
+        }
+       
         ret = run_rec(curChar, curString, mv[i].nState);
 
         // return immediately if branch was successful
@@ -175,6 +166,13 @@ pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
                 m_stack.push(mv[i].push[j]);
         }
         
+        // return success if acceptence state is reached
+        if(top == INIT_SYM) {
+            ret.first = curString;
+            ret.second = mv[i].nState;
+            return ret;
+        }
+
         curChar++;
         ret = run_rec(curChar, curString + m_input[curChar - 1], mv[i].nState);
 
@@ -195,11 +193,8 @@ pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
     m_stack.push(top);
 
     // return fail state if nothing was successful
-    if(ret.second == -2) {
-        ret.first = curString;
-        ret.second = -1;
-    }
+    ret.first = curString;
+    ret.second = -1;
 
     return ret;
-
 }

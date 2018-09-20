@@ -1,8 +1,9 @@
 # Author: Connor Nolan
 
-set(libs pda_lib)
+set(libs pda_lib fa_lib)
 
 add_subdirectory(pda)
+add_subdirectory(fa)
 
 add_executable(pda main.cpp)
 
