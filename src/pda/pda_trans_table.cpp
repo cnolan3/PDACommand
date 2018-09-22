@@ -1,12 +1,12 @@
 /**
- * @file    trans_func.cpp
+ * @file    pda_trans_table.cpp
  *
  * @brief   Transition function object definitions.
  *
  * @author  Connor Nolan
 **/
 
-#include "trans_func.h"
+#include "pda_trans_table.h"
 #include <iostream>
 
 using std::cout;
@@ -14,11 +14,11 @@ using std::endl;
 using std::vector;
 
 /**
- * tFunc constructor, create 3d transition table
+ * PDAtTable constructor, create 3d transition table
  *
  * @param    numStates number of states in PDA
 **/
-tFunc::tFunc(int numStates) 
+PDAtTable::PDAtTable(int numStates) 
     : m_numStates(numStates)
 {
     m_trans = new vector<move>[numStates * 255 * 255];
@@ -33,7 +33,7 @@ tFunc::tFunc(int numStates)
  * @param    nState next state value
  * @param    push characters to be pushed onto the stack
 **/
-void tFunc::setTrans(int state, char input, char stack, int nState, std::string push) {
+void PDAtTable::setTrans(int state, char input, char stack, int nState, std::string push) {
     move tmp;
 
     tmp.nState = nState;
@@ -52,14 +52,14 @@ void tFunc::setTrans(int state, char input, char stack, int nState, std::string 
  * @return   vector of moves that correspond to the current state, input and
  *           top of stack
 **/
-const vector<move>& tFunc::getTrans(int state, char input, char stack) {
+const vector<move>& PDAtTable::getTrans(int state, char input, char stack) {
     return m_trans[state + ((int)input * m_numStates) + ((int)stack * m_numStates * 255)];
 }
 
 /**
  * clear all transitions
 **/
-void tFunc::clear() {
+void PDAtTable::clear() {
     delete[] m_trans;
 
     m_trans = new vector<move>[m_numStates * 255 * 255];

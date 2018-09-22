@@ -1,6 +1,6 @@
 # Author: Connor Nolan
 
-set(tsources fa_test.cpp)
+set(tsources fa_trans_table_test.cpp)
 
 add_executable(fa_test ${tsources})
 target_link_libraries(fa_test fa_lib gmock_main)

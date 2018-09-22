@@ -18,10 +18,10 @@ PDA::PDA(int numStates, vector<rule> rules)
     : m_numStates(numStates)
 {
     // create transition functions
-    m_tFunc = new tFunc(m_numStates);
+    m_tTable = new PDAtTable(m_numStates);
 
     for(int i = 0; i < rules.size(); i++) {
-        m_tFunc->setTrans(rules[i].state, rules[i].input, rules[i].stackSym, rules[i].nState, rules[i].pushSym);
+        m_tTable->setTrans(rules[i].state, rules[i].input, rules[i].stackSym, rules[i].nState, rules[i].pushSym);
     }
 }
 
@@ -75,7 +75,7 @@ pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
     vector<move> mv;
 
     // try empty input character and empty stack character
-    mv = m_tFunc->getTrans(state, EMPTY_SYM, EMPTY_SYM);
+    mv = m_tTable->getTrans(state, EMPTY_SYM, EMPTY_SYM);
 
     for(int i = 0; i < mv.size(); i++) {
         for(int j = mv[i].push.length() - 1; j >= 0; j--) {
@@ -99,7 +99,7 @@ pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
 
     // try empty input character
     top = m_stack.pop();
-    mv = m_tFunc->getTrans(state, EMPTY_SYM, top);
+    mv = m_tTable->getTrans(state, EMPTY_SYM, top);
 
     for(int i = 0; i < mv.size(); i++) {
         for(int j = mv[i].push.length() - 1; j >= 0; j--) {
@@ -131,7 +131,7 @@ pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
     m_stack.push(top);
 
     // try empty stack character
-    mv = m_tFunc->getTrans(state, m_input[curChar], EMPTY_SYM);
+    mv = m_tTable->getTrans(state, m_input[curChar], EMPTY_SYM);
 
     for(int i = 0; i < mv.size(); i++) {
         for(int j = mv[i].push.length() - 1; j >= 0; j--) {
@@ -158,7 +158,7 @@ pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
 
     // try with input character and stack character
     top = m_stack.pop();
-    mv = m_tFunc->getTrans(state, m_input[curChar], top);
+    mv = m_tTable->getTrans(state, m_input[curChar], top);
 
     for(int i = 0; i < mv.size(); i++) {
         for(int j = mv[i].push.length() - 1; j >= 0; j--) {

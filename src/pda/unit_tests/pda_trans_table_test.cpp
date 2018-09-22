@@ -1,4 +1,4 @@
-#include "../trans_func.h"
+#include "../pda_trans_table.h"
 
 #include <vector>
 #include <gmock/gmock.h>
@@ -8,17 +8,17 @@ using std::vector;
 using ::testing::Eq;
 using ::testing::Test;
 
-class tFuncTest : public Test
+class PDAtTableTest : public Test
 {
 protected:
-    tFuncTest() {}
-    ~tFuncTest() {}
+    PDAtTableTest() {}
+    ~PDAtTableTest() {}
 
-    tFunc* t;
+    PDAtTable* t;
     vector<move> v;
 
     virtual void SetUp() {
-        t = new tFunc(3); 
+        t = new PDAtTable(3); 
 
         t->setTrans(0, 'a', 't', 1, "aa");
         t->setTrans(0, 'a', 't', 2, "bb");
@@ -32,7 +32,7 @@ protected:
 /**
  * test that moves are set correctly
 **/
-TEST_F(tFuncTest, set_get) {
+TEST_F(PDAtTableTest, set_get) {
 
     v = t->getTrans(2, 'c', 'd');
 
@@ -44,7 +44,7 @@ TEST_F(tFuncTest, set_get) {
 /**
  * test adding multiple moves to one transition
 **/
-TEST_F(tFuncTest, set_mult_one_trans) {
+TEST_F(PDAtTableTest, set_mult_one_trans) {
 
     v = t->getTrans(0, 'a', 't');
 
@@ -59,7 +59,7 @@ TEST_F(tFuncTest, set_mult_one_trans) {
 /**
  * test the clear function
 **/
-TEST_F(tFuncTest, set_clear) {
+TEST_F(PDAtTableTest, set_clear) {
 
     t->clear();
 

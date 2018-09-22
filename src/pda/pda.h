@@ -15,15 +15,12 @@
 #ifndef __PDA_H__
 #define __PDA_H__
 
-// define special symbols
-#define INIT_SYM 1
-#define EMPTY_SYM 2
-
 #include <vector>
 #include <string>
 #include <utility>
 #include "pda_stack.h"
-#include "trans_func.h"
+#include "pda_trans_table.h"
+#include "../constants.h"
 
 using std::string;
 using std::vector;
@@ -51,7 +48,7 @@ private:
     int m_numStates;
     string m_input;
     PDAStack m_stack;
-    tFunc* m_tFunc;
+    PDAtTable* m_tTable;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file    trans_table.h
+ * @file    fa_trans_table.h
  *
  * @brief   transition table for non-deterministic finite automaton
  *
@@ -11,11 +11,13 @@
 
 #include <vector>
 
-class tTable
+class FAtTable
 {
 public:
-    tTable(int numStates);
+    FAtTable(int numStates);
+    FAtTable(const FAtTable& old_table);
 
+    int numStates();
     void addTrans(int from, int to, char sym);
     const std::vector<int>& getTrans(int from, char sym);
 private:
