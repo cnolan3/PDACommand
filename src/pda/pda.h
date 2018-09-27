@@ -16,8 +16,10 @@
 #define __PDA_H__
 
 #include <vector>
+#include <list>
 #include <string>
 #include <utility>
+#include <istream>
 #include "pda_stack.h"
 #include "pda_trans_table.h"
 #include "../constants.h"
@@ -25,30 +27,24 @@
 using std::string;
 using std::vector;
 using std::pair;
-
-struct rule
-{
-    int state;
-    char input;
-    char stackSym;
-    int nState;
-    string pushSym;
-};
+using std::istream;
+using std::list;
 
 class PDA
 {
 public:
-    PDA(int numStates, vector<rule> rules);
+    PDA(const PDAtTable& table, std::vector<int> endStates);
 
-    vector<pair<string, int> > run(string input);
+    list<pair<string, int> > run(istream& input);
 private:
 
-    pair<string, int> run_rec(int& curChar, string curString, int state);
+    pair<string, int> step(istream& input, int state, string s);
 
     int m_numStates;
+    int* m_endStates;
     string m_input;
     PDAStack m_stack;
-    PDAtTable* m_tTable;
+    PDAtTable m_tTable;
 };
 
 #endif

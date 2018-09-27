@@ -14,14 +14,19 @@
  * @param    numStates number of states in PDA
  * @param    rules vector of transition function rules
 **/
-PDA::PDA(int numStates, vector<rule> rules) 
-    : m_numStates(numStates)
+PDA::PDA(const PDAtTable& table, std::vector<int> endStates) 
+    : m_tTable(table)
 {
-    // create transition functions
-    m_tTable = new PDAtTable(m_numStates);
+    m_numStates = m_tTable.numStates();
 
-    for(int i = 0; i < rules.size(); i++) {
-        m_tTable->setTrans(rules[i].state, rules[i].input, rules[i].stackSym, rules[i].nState, rules[i].pushSym);
+    m_endStates = new int[m_numStates];
+
+    for(int i = 0; i < m_numStates; i++) {
+        m_endStates[i] = 0;
+    }
+
+    for(int i = 0; i < endStates.size(); i++) {
+        m_endStates[endStates[i]] = 1; 
     }
 }
 
@@ -35,19 +40,16 @@ PDA::PDA(int numStates, vector<rule> rules)
  * @return   vector of pairs of matched strings and the
  *           acceptence states that they matched
 **/
-vector<pair<string, int> > PDA::run(string input) {
-    m_input = input;
-    vector<pair<string, int> > ret;
+list<pair<string, int> > PDA::run(istream& input) {
+    list<pair<string, int> > out;
     pair<string, int> tmp;
-    int curChar = 0;
 
     do {
-      tmp = run_rec(curChar, "", 0);
-      ret.push_back(tmp);
-      m_stack.clear();
-    } while(curChar < m_input.length() && tmp.second >= 0);
+        tmp = step(input, 0, "");
+        out.push_back(tmp);
+    } while(tmp.second >= 0);
 
-    return ret;
+    return out;
 }
 
 /**
@@ -59,142 +61,105 @@ vector<pair<string, int> > PDA::run(string input) {
  *
  * @return   pair of matched string and matched state
 **/
-pair<string, int> PDA::run_rec(int& curChar, string curString, int state) {
-
+pair<string, int> PDA::step(istream& input, int state, string s) {
     pair<string, int> ret;
-    char top;
 
-    // return fail state if past end of input string
-    if(curChar > m_input.length()) {
-        pair<string, int> ret;
-        ret.first = curString;
-        ret.second = -1;
-        return ret;
-    }
-
-    vector<move> mv;
-
-    // try empty input character and empty stack character
-    mv = m_tTable->getTrans(state, EMPTY_SYM, EMPTY_SYM);
-
-    for(int i = 0; i < mv.size(); i++) {
-        for(int j = mv[i].push.length() - 1; j >= 0; j--) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.push(mv[i].push[j]);
-        }
-        
-        ret = run_rec(curChar, curString, mv[i].nState);
-
-        // return immediately if branch was successful
-        if(ret.second >= 0)
-            return ret;
-
-        // if this branch was not successful, undo changes
-        // made to the stack
-        for(int j = 0; j < mv[i].push.length(); j++) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.pop();
-        }
-    }
-
-    // try empty input character
-    top = m_stack.pop();
-    mv = m_tTable->getTrans(state, EMPTY_SYM, top);
-
-    for(int i = 0; i < mv.size(); i++) {
-        for(int j = mv[i].push.length() - 1; j >= 0; j--) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.push(mv[i].push[j]);
-        }
-
-        // return success if acceptence state is reached
-        if(top == INIT_SYM) {
-            ret.first = curString;
-            ret.second = mv[i].nState;
-            return ret;
-        }
-       
-        ret = run_rec(curChar, curString, mv[i].nState);
-
-        // return immediately if branch was successful
-        if(ret.second >= 0)
-            return ret;
-
-        // if this branch was not successful, undo changes
-        // made to the stack
-        for(int j = 0; j < mv[i].push.length(); j++) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.pop();
-        }
-    }
-
-    m_stack.push(top);
-
-    // try empty stack character
-    mv = m_tTable->getTrans(state, m_input[curChar], EMPTY_SYM);
-
-    for(int i = 0; i < mv.size(); i++) {
-        for(int j = mv[i].push.length() - 1; j >= 0; j--) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.push(mv[i].push[j]);
-        }
-        
-        curChar++;
-        ret = run_rec(curChar, curString + m_input[curChar - 1], mv[i].nState);
-
-        // return immediately if branch was successful
-        if(ret.second >= 0)
-            return ret;
-
-        // if this branch was not successful, undo changes
-        // made to the stack
-        for(int j = 0; j < mv[i].push.length(); j++) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.pop();
-        }
-
-        curChar--;
-    }
-
-    // try with input character and stack character
-    top = m_stack.pop();
-    mv = m_tTable->getTrans(state, m_input[curChar], top);
-
-    for(int i = 0; i < mv.size(); i++) {
-        for(int j = mv[i].push.length() - 1; j >= 0; j--) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.push(mv[i].push[j]);
-        }
-        
-        // return success if acceptence state is reached
-        if(top == INIT_SYM) {
-            ret.first = curString;
-            ret.second = mv[i].nState;
-            return ret;
-        }
-
-        curChar++;
-        ret = run_rec(curChar, curString + m_input[curChar - 1], mv[i].nState);
-
-        // return immediately if branch was successful
-        if(ret.second >= 0)
-            return ret;
-
-        // if this branch was not successful, undo changes
-        // made to the stack
-        for(int j = 0; j < mv[i].push.length(); j++) {
-            if(mv[i].push[j] != EMPTY_SYM)
-                m_stack.pop();
-        }
-
-        curChar--;
-    }
-
-    m_stack.push(top);
-
-    // return fail state if nothing was successful
-    ret.first = curString;
+    ret.first = s;
     ret.second = -1;
+
+    vector<move> trans;
+    char tSym;
+    char stackSym;
+
+    // try with empty input and empty stack symbol
+    trans = m_tTable.getTrans(state, EMPTY_SYM, EMPTY_SYM);
+
+    for(int i = 0; i < trans.size(); i++) {
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.push(trans[i].push[j]);
+        }
+
+        ret = step(input, trans[i].nState, s);
+
+        if(ret.second >= 0)
+            return ret;
+
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.pop();
+        }
+    }
+
+    // try with empty input symbol
+    stackSym = m_stack.pop();
+    trans = m_tTable.getTrans(state, EMPTY_SYM, stackSym);
+
+    for(int i = 0; i < trans.size(); i++) {
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.push(trans[i].push[j]);
+        }
+
+        ret = step(input, trans[i].nState, s);
+
+        if(ret.second >= 0)
+            return ret;
+
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.pop();
+        }
+    }
+    m_stack.push(stackSym);
+
+    // try with empty stack symbol
+    if(!input.get(tSym)) {
+        ret.second = -2;
+        tSym = NULL_SYM;
+    }
+
+    ret.first = s + tSym;
+
+    trans = m_tTable.getTrans(state, (int)tSym, EMPTY_SYM);
+
+    for(int i = 0; i < trans.size(); i++) {
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.push(trans[i].push[j]);
+        }
+
+        ret = step(input, trans[i].nState, s + tSym);
+
+        if(ret.second >= 0)
+            return ret;
+
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.pop();
+        }
+    }
+
+    // try without empty symbols
+    stackSym = m_stack.pop();
+    trans = m_tTable.getTrans(state, (int)tSym, stackSym);
+
+    for(int i = 0; i < trans.size(); i++) {
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.push(trans[i].push[j]);
+        }
+
+        ret = step(input, trans[i].nState, s + tSym);
+
+        if(ret.second >= 0)
+            return ret;
+
+        for(int j = 0; j < trans[i].push.length(); j++) {
+            m_stack.pop();
+        }
+    }
+
+    input.putback(tSym);
+    m_stack.push(stackSym);
+
+    if(m_endStates[state]) {
+        ret.first = s;
+        ret.second = state;
+    }
 
     return ret;
 }

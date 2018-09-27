@@ -18,7 +18,11 @@ protected:
     vector<move> v;
 
     virtual void SetUp() {
-        t = new PDAtTable(3); 
+        std::vector<int> in;
+        in.push_back('a');
+        in.push_back('c');
+
+        t = new PDAtTable(3, in); 
 
         t->setTrans(0, 'a', 't', 1, "aa");
         t->setTrans(0, 'a', 't', 2, "bb");
@@ -66,4 +70,19 @@ TEST_F(PDAtTableTest, set_clear) {
     v = t->getTrans(0, 'a', 't');
 
     EXPECT_EQ(v.size(), 0);
+}
+
+/**
+ * test the copy constructor
+**/
+TEST_F(PDAtTableTest, copy_constructor) {
+ 
+    PDAtTable t2(*t);
+
+    v = t2.getTrans(2, 'c', 'd');
+
+    EXPECT_EQ(v.size(), 1);
+    EXPECT_EQ(v[0].nState, 0);
+    EXPECT_EQ(v[0].push, "G");
+   
 }

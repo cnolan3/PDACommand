@@ -14,6 +14,7 @@
 
 #include <string>
 #include <vector>
+#include "../constants.h"
     
 struct move
 {
@@ -24,14 +25,20 @@ struct move
 class PDAtTable
 {
 public:
-    PDAtTable(int numStates);
+    PDAtTable(int numStates, std::vector<int> inputSet);
+    PDAtTable(const PDAtTable& old_table);
 
-    void setTrans(int state, char input, char stack, int nState, std::string push);
+    unsigned int numStates();
+    void setTrans(int state, int input, char stack, int nState, std::string push);
     const std::vector<move>& getTrans(int state, char input, char stack);
     void clear();
 private:
 
-    int m_numStates;
+    unsigned int m_numStates;
+    unsigned int m_numInSyms;
+    unsigned int m_mapMin;
+    unsigned int m_mapMax;
+    unsigned int* m_inMap;
     std::vector<move>* m_trans;
 };
 
