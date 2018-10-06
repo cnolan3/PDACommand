@@ -23,6 +23,12 @@ using std::vector;
 PDAtTable::PDAtTable(int numStates, std::vector<int> inputSet) 
     : m_numStates(numStates)
 {
+    inputSet.push_back(EMPTY_SYM);
+    inputSet.push_back(INIT_SYM); // insert INIT_SYM and EMPTY_SYM,
+                                  // make sure not to include these
+                                  // in the vector passed to the 
+                                  // constructor
+
     m_numInSyms = inputSet.size();
 
     unsigned int mapSize;
@@ -92,7 +98,7 @@ unsigned int PDAtTable::numStates() {
  * @param    nState next state value
  * @param    push characters to be pushed onto the stack
 **/
-void PDAtTable::setTrans(int state, int input, char stack, int nState, std::string push) {
+void PDAtTable::setTrans(int state, int input, char stack, int nState, std::string push, void* (*action)()) {
     if(input == NULL_SYM)
         return;
 
@@ -100,6 +106,7 @@ void PDAtTable::setTrans(int state, int input, char stack, int nState, std::stri
 
     tmp.nState = nState;
     tmp.push = push;
+    tmp.action = action;
 
     if(input < m_mapMin || input > m_mapMax)
         return;

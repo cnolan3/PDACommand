@@ -20,6 +20,7 @@ struct move
 {
     int nState;
     std::string push;
+    void* (*action)();
 };
 
 class PDAtTable
@@ -29,7 +30,7 @@ public:
     PDAtTable(const PDAtTable& old_table);
 
     unsigned int numStates();
-    void setTrans(int state, int input, char stack, int nState, std::string push);
+    void setTrans(int state, int input, char stack, int nState, std::string push, void* (*action)() = NULL);
     const std::vector<move>& getTrans(int state, char input, char stack);
     void clear();
 private:

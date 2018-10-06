@@ -7,6 +7,10 @@
 **/
 
 #include "pda.h"
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 /**
  * PDA constructor
@@ -71,18 +75,25 @@ pair<string, int> PDA::step(istream& input, int state, string s) {
     char tSym;
     char stackSym;
 
+    stackSym = m_stack.pop();
+    m_stack.push(stackSym);
+
     // try with empty input and empty stack symbol
     trans = m_tTable.getTrans(state, EMPTY_SYM, EMPTY_SYM);
 
     for(int i = 0; i < trans.size(); i++) {
-        for(int j = 0; j < trans[i].push.length(); j++) {
+        for(int j = trans[i].push.length() - 1; j >= 0; j--) {
             m_stack.push(trans[i].push[j]);
         }
 
         ret = step(input, trans[i].nState, s);
 
-        if(ret.second >= 0)
+        if(ret.second >= 0) {
+            if(trans[i].action)
+                trans[i].action();
+
             return ret;
+        }
 
         for(int j = 0; j < trans[i].push.length(); j++) {
             m_stack.pop();
@@ -94,14 +105,18 @@ pair<string, int> PDA::step(istream& input, int state, string s) {
     trans = m_tTable.getTrans(state, EMPTY_SYM, stackSym);
 
     for(int i = 0; i < trans.size(); i++) {
-        for(int j = 0; j < trans[i].push.length(); j++) {
+        for(int j = trans[i].push.length() - 1; j >= 0; j--) {
             m_stack.push(trans[i].push[j]);
         }
 
         ret = step(input, trans[i].nState, s);
 
-        if(ret.second >= 0)
+        if(ret.second >= 0) {
+            if(trans[i].action)
+                trans[i].action();
+
             return ret;
+        }
 
         for(int j = 0; j < trans[i].push.length(); j++) {
             m_stack.pop();
@@ -120,14 +135,18 @@ pair<string, int> PDA::step(istream& input, int state, string s) {
     trans = m_tTable.getTrans(state, (int)tSym, EMPTY_SYM);
 
     for(int i = 0; i < trans.size(); i++) {
-        for(int j = 0; j < trans[i].push.length(); j++) {
+        for(int j = trans[i].push.length() - 1; j >= 0; j--) {
             m_stack.push(trans[i].push[j]);
         }
 
         ret = step(input, trans[i].nState, s + tSym);
 
-        if(ret.second >= 0)
+        if(ret.second >= 0) {
+            if(trans[i].action)
+                trans[i].action();
+
             return ret;
+        }
 
         for(int j = 0; j < trans[i].push.length(); j++) {
             m_stack.pop();
@@ -139,14 +158,18 @@ pair<string, int> PDA::step(istream& input, int state, string s) {
     trans = m_tTable.getTrans(state, (int)tSym, stackSym);
 
     for(int i = 0; i < trans.size(); i++) {
-        for(int j = 0; j < trans[i].push.length(); j++) {
+        for(int j = trans[i].push.length() - 1; j >= 0; j--) {
             m_stack.push(trans[i].push[j]);
         }
 
         ret = step(input, trans[i].nState, s + tSym);
 
-        if(ret.second >= 0)
+        if(ret.second >= 0) {
+            if(trans[i].action)
+                trans[i].action();
+
             return ret;
+        }
 
         for(int j = 0; j < trans[i].push.length(); j++) {
             m_stack.pop();
