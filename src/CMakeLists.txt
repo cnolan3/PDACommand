@@ -1,9 +1,9 @@
 # Author: Connor Nolan
 
-set(libs pda_lib fa_lib)
+set(libs fa_lib utils_lib)
 
-add_subdirectory(pda)
 add_subdirectory(fa)
+add_subdirectory(util)
 
 add_executable(clex main.cpp)
 

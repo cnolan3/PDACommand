@@ -11,19 +11,31 @@
  *
  * @param    table transition table to use in FA
 **/
-FA::FA(const FAtTable& table, const std::vector<int>& endStates)
+FA::FA(const FAtTable& table, FAAlpha& alpha)
     : m_tTable(table)
 {
     m_numStates = m_tTable.numStates();
 
-    m_endStates = new int[m_numStates];
+    vector<alphaToken> at = alpha.getList();
 
-    for(int i = 0; i < m_numStates; i++) {
-        m_endStates[i] = 0;
+    int max = 0;
+
+    for(int i = 0; i < at.size(); i++) {
+        if(at[i].state > max)
+            max = at[i].state;
     }
 
-    for(int i = 0; i < endStates.size(); i++) {
-        m_endStates[endStates[i]] = 1;
+    max++;
+    m_tokenTable = new alphaChar[max];
+
+    for(int i = 0; i < max; i++) {
+        m_tokenTable[i].id = -1;
+        m_tokenTable[i].action = NULL;
+    }
+
+    for(int i = 0; i < at.size(); i++) {
+        m_tokenTable[at[i].state].id = at[i].id;
+        m_tokenTable[at[i].state].action = at[i].action;
     }
 }
 
@@ -34,14 +46,14 @@ FA::FA(const FAtTable& table, const std::vector<int>& endStates)
  *
  * @return   list of matched states and strings in order
 **/
-std::list<std::pair<std::string, int> > FA::run(std::istream& input) {
-    std::list<std::pair<std::string, int> > out;
-    std::pair<std::string, int> tmp;
+std::list<token> FA::run(std::istream& input) {
+    std::list<token> out;
+    token tmp;
 
     do {
         tmp = step(input, 0, "");
         out.push_back(tmp);
-    } while(tmp.second >= 0);
+    } while(tmp.id >= 0);
 
     return out;
 }
@@ -56,12 +68,11 @@ std::list<std::pair<std::string, int> > FA::run(std::istream& input) {
  *
  * @return   pair of matched state id and matched string
 **/
-std::pair<std::string, int> FA::step(std::istream& input, int state, std::string s) {
+token FA::step(std::istream& input, int state, std::string s) {
+    token ret;
 
-    std::pair<std::string, int> ret;
-
-    ret.first = s;
-    ret.second = -1;
+    ret.id = -1;
+    ret.val = NULL;
 
     std::vector<int> trans;
     char tSym;
@@ -73,20 +84,20 @@ std::pair<std::string, int> FA::step(std::istream& input, int state, std::string
         ret = step(input, trans[i], s);
 
         // if branch was successful, return
-        if(ret.second >= 0)
+        if(ret.id >= 0)
             return ret;
     }
 
     // try with transition symbol
     // if input stream is empty, return end of stream state
     if(!input.get(tSym)) {
-        ret.second = -2;
+        ret.id = -2;
         tSym = NULL_SYM;
     }
 
     // in case of a fail state, report
     // the unrecognized symbol
-    ret.first = s + tSym;
+    //ret.first = s + tSym;
 
     trans = m_tTable.getTrans(state, tSym);
 
@@ -94,15 +105,17 @@ std::pair<std::string, int> FA::step(std::istream& input, int state, std::string
         ret = step(input, trans[i], s + tSym);
 
         // if branch was successful, return
-        if(ret.second >= 0)
+        if(ret.id >= 0)
             return ret;
     }
 
     input.putback(tSym);
 
-    if(m_endStates[state]) {
-        ret.first = s;
-        ret.second = state;
+    if(m_tokenTable[state].id >= 0) {
+        ret.id = m_tokenTable[state].id;
+
+        if(m_tokenTable[state].action)
+            ret.val = m_tokenTable[state].action(s);
     }
 
     // return fail state

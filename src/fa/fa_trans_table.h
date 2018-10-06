@@ -11,6 +11,8 @@
 
 #include <vector>
 
+using std::vector;
+
 class FAtTable
 {
 public:
@@ -19,7 +21,7 @@ public:
 
     int numStates();
     void addTrans(int from, int to, char sym);
-    const std::vector<int>& getTrans(int from, char sym);
+    const vector<int>& getTrans(int from, char sym);
 private:
     int m_numStates;
     std::vector<int>* m_table;

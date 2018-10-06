@@ -16,20 +16,32 @@
 #include <istream>
 #include <utility>
 #include "fa_trans_table.h"
-#include "../constants.h"
+#include "fa_alpha.h"
+#include "../util/constants.h"
+#include "../util/tokens.h"
+
+using std::vector;
+using std::pair;
+using std::string;
 
 class FA
 {
 public:
-    FA(const FAtTable& table, const std::vector<int>& endStates);
+    FA(const FAtTable& table, FAAlpha& alpha);
 
-    std::list<std::pair<std::string, int> > run(std::istream& input);
+    std::list<token> run(std::istream& input);
 private:
 
-    std::pair<std::string, int> step(std::istream& input, int state, std::string s);
+    struct alphaChar
+    {
+        int id;
+        void* (*action)(string text);
+    };
+
+    token step(std::istream& input, int state, std::string s);
 
     int m_numStates;
-    int* m_endStates;
+    alphaChar* m_tokenTable;
     FAtTable m_tTable;
 };
 

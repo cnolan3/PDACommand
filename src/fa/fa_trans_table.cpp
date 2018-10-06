@@ -7,7 +7,7 @@
 **/
 
 #include "fa_trans_table.h"
-#include "../constants.h"
+#include "../util/constants.h"
 
 /**
  * FAtTable constructor
@@ -61,7 +61,7 @@ void FAtTable::addTrans(int from, int to, char sym) {
     // if the given symbol is the NULL_SYM, return
     if(sym == NULL_SYM)
         return;
-    
+
     m_table[(from * 255) + (int)sym].push_back(to);
 
 }
