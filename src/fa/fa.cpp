@@ -4,12 +4,14 @@
  * @author  Connor Nolan
 **/
 
+#include <climits>
 #include "fa.h"
 
 /**
  * FA constructor
  *
  * @param    table transition table to use in FA
+ * @param    alpha output alphabet
 **/
 FA::FA(const FAtTable& table, FAAlpha& alpha)
     : m_tTable(table)
@@ -29,7 +31,7 @@ FA::FA(const FAtTable& table, FAAlpha& alpha)
     m_tokenTable = new alphaChar[max];
 
     for(int i = 0; i < max; i++) {
-        m_tokenTable[i].id = -1;
+        m_tokenTable[i].id = CHAR_MAX;
         m_tokenTable[i].action = NULL;
     }
 
@@ -65,13 +67,14 @@ std::list<token> FA::run(std::istream& input) {
  *
  * @param    input input stream
  * @param    state state to go to
+ * @param    s string being matched
  *
- * @return   pair of matched state id and matched string
+ * @return   token that is returned from match
 **/
 token FA::step(std::istream& input, int state, std::string s) {
     token ret;
 
-    ret.id = -1;
+    ret.id = CHAR_MAX;
     ret.val = NULL;
 
     std::vector<int> trans;
@@ -91,7 +94,7 @@ token FA::step(std::istream& input, int state, std::string s) {
     // try with transition symbol
     // if input stream is empty, return end of stream state
     if(!input.get(tSym)) {
-        ret.id = -2;
+        //ret.id = -2;
         tSym = NULL_SYM;
     }
 
@@ -105,7 +108,7 @@ token FA::step(std::istream& input, int state, std::string s) {
         ret = step(input, trans[i], s + tSym);
 
         // if branch was successful, return
-        if(ret.id >= 0)
+        if(ret.id < CHAR_MAX)
             return ret;
     }
 

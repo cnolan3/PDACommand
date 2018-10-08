@@ -1,3 +1,11 @@
+/**
+ * @file    fa_alpha.h
+ *
+ * @brief   Finite automaton alphabet object.
+ *
+ * @author  Connor Nolan
+**/
+
 #ifndef __FA_ALPHA_H__
 #define __FA_ALPHA_H__
 
@@ -12,7 +20,7 @@ class FAAlpha
 public:
     FAAlpha();
 
-    void addAlpha(int id, int state, void* (*action)(string text));
+    void addAlpha(char id, int state, void* (*action)(string text));
     vector<alphaToken> getList();
 private:
     vector<alphaToken> alpha;

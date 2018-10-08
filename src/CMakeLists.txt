@@ -1,9 +1,10 @@
 # Author: Connor Nolan
 
-set(libs fa_lib utils_lib)
+set(libs fa_lib utils_lib parser_lib)
 
 add_subdirectory(fa)
 add_subdirectory(util)
+add_subdirectory(parser)
 
 add_executable(clex main.cpp)
 

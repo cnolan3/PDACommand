@@ -4,6 +4,7 @@
 #include <utility>
 #include <sstream>
 #include "fa/fa.h"
+#include "parser/parse_funcs.h"
 
 using std::cout;
 using std::cin;
@@ -14,38 +15,83 @@ using std::list;
 void* test(string text);
 
 int main() {
+    pTable pt(5, 10);
+    pt.set(0, 0, 7, shift);
+    pt.set(1, 0, 9, shift);
+    pt.set(3, 0, 1, gotoState);
+    pt.set(4, 0, 2, gotoState);
+    pt.set(2, 1, 0, accept);
+    pt.set(0, 2, 4, shift);
+    pt.set(1, 2, 6, shift);
+    pt.set(4, 2, 3, gotoState);
+    pt.set(2, 3, 0, reduce);
+    pt.set(0, 4, 4, shift);
+    pt.set(1, 4, 6, shift);
+    pt.set(4, 4, 5, gotoState);
+    pt.set(2, 5, 1, reduce);
+    pt.set(2, 6, 2, reduce);
+    pt.set(0, 7, 7, shift);
+    pt.set(1, 7, 9, shift);
+    pt.set(4, 7, 8, gotoState);
+    pt.set(0, 8, 1, reduce);
+    pt.set(1, 8, 1, reduce);
+    pt.set(0, 9, 2, reduce);
+    pt.set(1, 9, 2, reduce);
 
-    FAtTable table(4);
+    string s = "";
+    s += 4;
+    s += 4;
 
-    table.addTrans(0, 1, EMPTY_SYM);
-    table.addTrans(1, 2, 'a');
-    table.addTrans(2, 1, EMPTY_SYM);
-    table.addTrans(0, 3, '\n');
+    grammar g;
+    g.addRule(3, s, NULL);
 
-    FAAlpha alpha;
+    s = "";
+    s += (char)0;
+    s += 4;
 
-    alpha.addAlpha(0, 2, test);
-    alpha.addAlpha(1, 3, test);
+    g.addRule(4, s, NULL);
 
-    FA fa(table, alpha);
+    s = "";
+    s += 1;
 
-    list<token> out = fa.run(cin);
+    g.addRule(4, s, NULL);
 
-    cout << out.size() << endl;
+    list<token> tlist;
+    token t;
+    t.id = (char)0;
+    t.val = NULL;
 
-    while(out.size() > 0) {
-        token t = out.front();
-        out.pop_front();
+    tlist.push_back(t);
 
-        cout << t.id << endl;
-    }
-    
-    return 0;
-}
+    t.id = (char)1;
+    t.val = NULL;
 
-void* test(string text) {
-    for(int i = 0; i < text.length(); i++) {
-        cout << (int)text[i] << " ";
-    }
-    cout << endl;
+    tlist.push_back(t);
+
+    t.id = (char)0;
+    t.val = NULL;
+
+    tlist.push_back(t);
+
+    t.id = (char)0;
+    t.val = NULL;
+
+    tlist.push_back(t);
+
+    t.id = (char)1;
+    t.val = NULL;
+
+    tlist.push_back(t);
+
+    t.id = (char)0;
+    t.val = NULL;
+
+    tlist.push_back(t);
+
+    t.id = (char)2;
+    t.val = NULL;
+
+    tlist.push_back(t);
+
+    runParse(pt, g, tlist); 
 }
