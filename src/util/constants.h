@@ -8,6 +8,8 @@
 #ifndef __CONSTANTS_H__
 #define __CONSTANTS_H__
 
+#include <climits>
+
 // this symbol is always excluded from all
 // symbol sets, should never be used to create
 // rules for a transition table.
@@ -18,5 +20,10 @@
 
 // empty transition symbol.
 #define EMPTY_SYM 2
+
+// end symbol for LR parser string
+#define END_SYM UCHAR_MAX - 1
+
+#define CHAR_SENTINEL UCHAR_MAX
 
 #endif

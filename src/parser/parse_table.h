@@ -2,7 +2,8 @@
  * @file    parse_table.h
  *
  * @brief   parse table object to be used with the various
- *          types of LR parsers.
+ *          types of LR parsers. All ascii values are 
+ *          accepted symbols.
  *
  * @author  Connor Nolan
 **/
@@ -27,13 +28,12 @@ struct move
 class pTable
 {
 public:
-    pTable(int numSym, int numStates);
+    pTable(int numStates);
 
-    void set(char sym, int state, int num, moveType type);
+    void set(unsigned char sym, int state, int num, moveType type);
 
-    move get(char sym, int state);
+    move get(unsigned char sym, int state);
 private:
-    int m_numSym;
     int m_numStates;
 
     move* m_syms;

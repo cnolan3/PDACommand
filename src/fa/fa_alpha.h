@@ -20,7 +20,7 @@ class FAAlpha
 public:
     FAAlpha();
 
-    void addAlpha(char id, int state, void* (*action)(string text));
+    void addAlpha(unsigned char id, int state, void* (*action)(string text), bool ignore = false);
     vector<alphaToken> getList();
 private:
     vector<alphaToken> alpha;

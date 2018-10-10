@@ -33,8 +33,9 @@ private:
 
     struct alphaChar
     {
-        char id;
+        unsigned char id;
         void* (*action)(string text);
+        bool ignore;
     };
 
     token step(std::istream& input, int state, std::string s);

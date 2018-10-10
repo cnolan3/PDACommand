@@ -31,7 +31,7 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
 
     while(1) {
 
-/*
+
         list<token>::iterator tlistit;
 
         cout << sStack[0] << " ";
@@ -46,7 +46,7 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
         }
 
         cout << "    ";
-*/
+
 
         // if either input or state stack if empty
         // return fail
@@ -55,7 +55,7 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
 
         // get move for current token and state
         m = pt.get(input.front().id, sStack.back());
-/*
+
         if(m.type == shift)
             cout << "shift";
         else if(m.type == reduce)
@@ -68,7 +68,7 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
             cout << "fail";
 
         cout << " " << m.num << endl;
-*/
+
         // take action depending on type of move
         if(m.type == shift) {
             tStack.push_back(input.front());

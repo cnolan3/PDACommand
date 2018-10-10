@@ -7,6 +7,11 @@
 **/
 
 #include "parse_table.h"
+#include <climits>
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 /**
  * pTable constructor
@@ -15,12 +20,12 @@
  * @param    numNTerm number of non-terminals in table
  * @param    numStates number of states in table
 **/
-pTable::pTable(int numSym, int numStates)
-    : m_numSym(numSym), m_numStates(numStates)
+pTable::pTable(int numStates)
+    : m_numStates(numStates)
 {
-    m_syms = new move[m_numSym * m_numStates];
+    m_syms = new move[UCHAR_MAX * m_numStates];
 
-    for(int i = 0; i < (m_numSym * m_numStates); i++) {
+    for(int i = 0; i < (UCHAR_MAX * m_numStates); i++) {
         m_syms[i].num = -1;
         m_syms[i].type = none;
     }
@@ -34,12 +39,12 @@ pTable::pTable(int numSym, int numStates)
  * @param    num number associated with table entry
  * @param    type entry type
 **/
-void pTable::set(char sym, int state, int num, moveType type) {
+void pTable::set(unsigned char sym, int state, int num, moveType type) {
     move m;
     m.num = num;
     m.type = type;
 
-    m_syms[(state * m_numSym) + sym] = m;
+    m_syms[(state * UCHAR_MAX) + sym] = m;
 }
 
 /**
@@ -50,6 +55,6 @@ void pTable::set(char sym, int state, int num, moveType type) {
  *
  * @return   move for specified terminal
 **/
-move pTable::get(char sym, int state) {
-    return m_syms[(state * m_numSym) + sym];
+move pTable::get(unsigned char sym, int state) {
+    return m_syms[(state * UCHAR_MAX) + sym];
 }

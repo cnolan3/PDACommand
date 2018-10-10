@@ -6,6 +6,10 @@
 
 #include <climits>
 #include "fa.h"
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 /**
  * FA constructor
@@ -20,24 +24,17 @@ FA::FA(const FAtTable& table, FAAlpha& alpha)
 
     vector<alphaToken> at = alpha.getList();
 
-    int max = 0;
+    m_tokenTable = new alphaChar[m_numStates];
 
-    for(int i = 0; i < at.size(); i++) {
-        if(at[i].state > max)
-            max = at[i].state;
-    }
-
-    max++;
-    m_tokenTable = new alphaChar[max];
-
-    for(int i = 0; i < max; i++) {
-        m_tokenTable[i].id = CHAR_MAX;
+    for(int i = 0; i < m_numStates; i++) {
+        m_tokenTable[i].id = CHAR_SENTINEL;
         m_tokenTable[i].action = NULL;
     }
 
     for(int i = 0; i < at.size(); i++) {
         m_tokenTable[at[i].state].id = at[i].id;
         m_tokenTable[at[i].state].action = at[i].action;
+        m_tokenTable[at[i].state].ignore = at[i].ignore;
     }
 }
 
@@ -52,10 +49,20 @@ std::list<token> FA::run(std::istream& input) {
     std::list<token> out;
     token tmp;
 
-    do {
+    while(1) {
         tmp = step(input, 0, "");
-        out.push_back(tmp);
-    } while(tmp.id >= 0);
+
+        if(tmp.id == CHAR_SENTINEL)
+            break;
+
+        if(!tmp.ignore)
+            out.push_back(tmp);
+    }
+
+    tmp.id = END_SYM;
+    tmp.val = NULL;
+
+    out.push_back(tmp);
 
     return out;
 }
@@ -74,7 +81,7 @@ std::list<token> FA::run(std::istream& input) {
 token FA::step(std::istream& input, int state, std::string s) {
     token ret;
 
-    ret.id = CHAR_MAX;
+    ret.id = CHAR_SENTINEL;
     ret.val = NULL;
 
     std::vector<int> trans;
@@ -87,7 +94,7 @@ token FA::step(std::istream& input, int state, std::string s) {
         ret = step(input, trans[i], s);
 
         // if branch was successful, return
-        if(ret.id >= 0)
+        if(ret.id != CHAR_SENTINEL)
             return ret;
     }
 
@@ -108,14 +115,15 @@ token FA::step(std::istream& input, int state, std::string s) {
         ret = step(input, trans[i], s + tSym);
 
         // if branch was successful, return
-        if(ret.id < CHAR_MAX)
+        if(ret.id != CHAR_SENTINEL)
             return ret;
     }
 
     input.putback(tSym);
 
-    if(m_tokenTable[state].id >= 0) {
+    if(m_tokenTable[state].id != CHAR_SENTINEL) {
         ret.id = m_tokenTable[state].id;
+        ret.ignore = m_tokenTable[state].ignore;
 
         if(m_tokenTable[state].action)
             ret.val = m_tokenTable[state].action(s);
