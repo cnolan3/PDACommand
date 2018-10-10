@@ -61,6 +61,7 @@ std::list<token> FA::run(std::istream& input) {
 
     tmp.id = END_SYM;
     tmp.val = NULL;
+    tmp.ignore = false;
 
     out.push_back(tmp);
 

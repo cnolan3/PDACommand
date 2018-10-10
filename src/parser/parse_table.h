@@ -11,7 +11,8 @@
 #ifndef __PARSE_TABLE__
 #define __PARSE_TABLE__
 
-enum moveType {
+enum moveType 
+{
     accept,
     reduce,
     shift,
