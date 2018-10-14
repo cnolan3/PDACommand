@@ -39,7 +39,7 @@ pTable::pTable(int numStates)
  * @param    num number associated with table entry
  * @param    type entry type
 **/
-void pTable::set(unsigned char sym, int state, int num, moveType type) {
+void pTable::set(unsigned int sym, int state, int num, moveType type) {
     move m;
     m.num = num;
     m.type = type;
@@ -55,6 +55,6 @@ void pTable::set(unsigned char sym, int state, int num, moveType type) {
  *
  * @return   move for specified terminal
 **/
-move pTable::get(unsigned char sym, int state) {
+move pTable::get(unsigned int sym, int state) {
     return m_syms[(state * UCHAR_MAX) + sym];
 }

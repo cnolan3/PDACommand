@@ -33,7 +33,7 @@ private:
 
     struct alphaChar
     {
-        unsigned char id;
+        unsigned int id;
         void* (*action)(string text);
         bool ignore;
     };

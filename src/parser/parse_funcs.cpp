@@ -5,6 +5,7 @@
 **/
 
 #include "parse_funcs.h"
+#include <climits>
 #include <vector>
 #include <iostream>
 
@@ -77,9 +78,9 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
         }
         else if(m.type == reduce) {
             rule r = g.getRule(m.num);
-            void** varBuf = new void*[r.lhs.length()];
+            void** varBuf = new void*[r.lhs.size()];
 
-            for(int i = r.lhs.length() - 1; i >= 0; i--) {
+            for(int i = r.lhs.size() - 1; i >= 0; i--) {
                 if(r.lhs[i] == tStack.back().id) {
                     varBuf[i] = tStack.back().val;
                     tStack.pop_back();
@@ -111,4 +112,35 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
     }
 
     return 1;
+}
+
+/**
+ * generate a LALR parse table
+ *
+ * @param    g grammar
+ * 
+ * @return   parse table from g
+**/
+pTable& LALR(grammar& g) {
+    vector<rule> rules;
+    tokenType* types = new tokenType[UCHAR_MAX];
+    pTable* pt;
+
+    // classify all symbols as terminal or nonterminal
+    for(int i = 0; i < UCHAR_MAX; i++) {
+        types[i] = empty;
+    }
+
+    rules = g.getRules();
+
+    for(int i = 0; i < rules.size(); i++) {
+        rule r = rules[i];
+
+        types[r.rhs] = nonterminal;
+        
+        for(int j = 0; j < r.lhs.size(); j++) {
+            if(types[r.lhs[j]] == empty)
+                types[r.lhs[j]] = terminal;
+        }
+    }
 }

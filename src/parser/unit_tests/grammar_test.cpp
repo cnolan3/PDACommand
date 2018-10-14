@@ -19,8 +19,15 @@ protected:
     grammar g;
 
     virtual void SetUp() {
-        g.addRule('A', "aa", NULL);
-        g.addRule('B', "gA", func);
+        vector<unsigned int> v;
+        v.push_back('a');
+        v.push_back('a');
+        g.addRule('A', v, NULL);
+
+        v.clear();
+        v.push_back('g');
+        v.push_back('A');
+        g.addRule('B', v, func);
     }
 
     virtual void TearDown() {}
@@ -30,7 +37,8 @@ TEST_F(grammarTest, get_single) {
     rule r = g.getRule(0);
 
     EXPECT_EQ(r.rhs, 'A');
-    EXPECT_EQ(r.lhs, "aa");
+    EXPECT_EQ(r.lhs[0], 'a');
+    EXPECT_EQ(r.lhs[1], 'a');
     EXPECT_THAT(r.action, IsNull());
 }
 
@@ -40,10 +48,12 @@ TEST_F(grammarTest, get_all) {
     EXPECT_EQ(rules.size(), 2);
 
     EXPECT_EQ(rules[0].rhs, 'A');
-    EXPECT_EQ(rules[0].lhs, "aa");
+    EXPECT_EQ(rules[0].lhs[0], 'a');
+    EXPECT_EQ(rules[0].lhs[1], 'a');
     EXPECT_THAT(rules[0].action, IsNull());
 
     EXPECT_EQ(rules[1].rhs, 'B');
-    EXPECT_EQ(rules[1].lhs, "gA");
+    EXPECT_EQ(rules[1].lhs[0], 'g');
+    EXPECT_EQ(rules[1].lhs[1], 'A');
     EXPECT_THAT(rules[1].action, NotNull());
 }

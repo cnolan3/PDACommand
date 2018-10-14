@@ -7,17 +7,24 @@ using std::string;
 
 struct token
 {
-    unsigned char id;
+    unsigned int id;
     void* val;
     bool ignore;
 };
 
 struct alphaToken
 {
-    unsigned char id;
+    unsigned int id;
     int state;
     void* (*action)(string text);
     bool ignore;
+};
+
+enum tokenType
+{
+    terminal,
+    nonterminal,
+    empty
 };
 
 #endif

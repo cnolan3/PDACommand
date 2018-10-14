@@ -23,9 +23,9 @@ FAAlpha::FAAlpha() {
  * @param    state fa acceptance state that corresponds to character
  * @param    action function the executes on match
 **/
-void FAAlpha::addAlpha(unsigned char id, int state, void* (*action)(string text), bool ignore) {
+void FAAlpha::addAlpha(unsigned int id, int state, void* (*action)(string text), bool ignore) {
     // should not be able to set an id to the sentinel character
-    if(id == CHAR_SENTINEL)
+    if(id == SENTINEL)
         return;
 
     alphaToken a;

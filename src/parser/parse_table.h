@@ -22,7 +22,7 @@ enum moveType
 
 struct move
 {
-    int num;
+    unsigned int num;
     moveType type;
 };
 
@@ -31,9 +31,9 @@ class pTable
 public:
     pTable(int numStates);
 
-    void set(unsigned char sym, int state, int num, moveType type);
+    void set(unsigned int sym, int state, int num, moveType type);
 
-    move get(unsigned char sym, int state);
+    move get(unsigned int sym, int state);
 private:
     int m_numStates;
 

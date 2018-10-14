@@ -27,7 +27,7 @@ FA::FA(const FAtTable& table, FAAlpha& alpha)
     m_tokenTable = new alphaChar[m_numStates];
 
     for(int i = 0; i < m_numStates; i++) {
-        m_tokenTable[i].id = CHAR_SENTINEL;
+        m_tokenTable[i].id = SENTINEL;
         m_tokenTable[i].action = NULL;
     }
 
@@ -52,7 +52,7 @@ std::list<token> FA::run(std::istream& input) {
     while(1) {
         tmp = step(input, 0, "");
 
-        if(tmp.id == CHAR_SENTINEL)
+        if(tmp.id == SENTINEL)
             break;
 
         if(!tmp.ignore)
@@ -82,7 +82,7 @@ std::list<token> FA::run(std::istream& input) {
 token FA::step(std::istream& input, int state, std::string s) {
     token ret;
 
-    ret.id = CHAR_SENTINEL;
+    ret.id = SENTINEL;
     ret.val = NULL;
 
     std::vector<int> trans;
@@ -95,7 +95,7 @@ token FA::step(std::istream& input, int state, std::string s) {
         ret = step(input, trans[i], s);
 
         // if branch was successful, return
-        if(ret.id != CHAR_SENTINEL)
+        if(ret.id != SENTINEL)
             return ret;
     }
 
@@ -116,13 +116,13 @@ token FA::step(std::istream& input, int state, std::string s) {
         ret = step(input, trans[i], s + tSym);
 
         // if branch was successful, return
-        if(ret.id != CHAR_SENTINEL)
+        if(ret.id != SENTINEL)
             return ret;
     }
 
     input.putback(tSym);
 
-    if(m_tokenTable[state].id != CHAR_SENTINEL) {
+    if(m_tokenTable[state].id != SENTINEL) {
         ret.id = m_tokenTable[state].id;
         ret.ignore = m_tokenTable[state].ignore;
 

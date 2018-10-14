@@ -19,4 +19,6 @@ using std::list;
 
 int runParse(pTable& pt, grammar& g, list<token>& input);
 
+pTable& LALR(grammar& g);
+
 #endif

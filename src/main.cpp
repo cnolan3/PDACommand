@@ -42,21 +42,21 @@ int main() {
     pt.set(0, 9, 2, reduce);
     pt.set(1, 9, 2, reduce);
 
-    string s = "";
-    s += 4;
-    s += 4;
+    vector<unsigned int> s;
+    s.push_back(4);
+    s.push_back(4);
 
     grammar g;
     g.addRule(3, s, t1);
 
-    s = "";
-    s += (char)0;
-    s += 4;
+    s.clear();
+    s.push_back(0);
+    s.push_back(4);
 
     g.addRule(4, s, t2);
 
-    s = "";
-    s += 1;
+    s.clear();
+    s.push_back(1);
 
     g.addRule(4, s, t3);
 
@@ -112,7 +112,7 @@ int main() {
 void* t1(void** varBuf) {
 //    cout << "S -> XX" << endl;
     int a = *((int*)varBuf[0]) * *((int*)varBuf[1]);
-    cout << a << endl;
+//    cout << a << endl;
 }
 
 void* t2(void** varBuf) {

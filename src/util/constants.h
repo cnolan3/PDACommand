@@ -22,8 +22,8 @@
 #define EMPTY_SYM 2
 
 // end symbol for LR parser string
-#define END_SYM UCHAR_MAX - 1
+#define END_SYM UINT_MAX - 1
 
-#define CHAR_SENTINEL UCHAR_MAX
+#define SENTINEL UINT_MAX
 
 #endif
