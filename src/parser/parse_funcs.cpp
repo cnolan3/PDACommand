@@ -151,19 +151,6 @@ pTable& LALR(grammar& g) {
     }
     //------------------------------------------------
 
-    unordered_map<int, tokenType>::iterator p;
-    for(p = types.begin(); p != types.end(); p++) {
-        cout << (char)(*p).first << " : ";
-
-        if((*p).second == nonterminal)
-            cout << "non-terminal";
-        else if((*p).second == terminal)
-            cout << "terminal";
-        else
-            cout << "error";
-
-        cout << endl;
-    }
 
     //------------------------------------------------
     // map first symbols
@@ -195,20 +182,6 @@ pTable& LALR(grammar& g) {
     }
     //--------------------------------------------------
 
-    cout << endl;
-    unordered_map<int, list<int> >::iterator print;
-    for(print = first.begin(); print != first.end(); print++) {
-        cout << (char)(*print).first << " : ";
-
-        list<int>::iterator listit;
-        for(listit = (*print).second.begin(); listit != (*print).second.end(); listit++) {
-            cout << (char)(*listit) << ", ";
-        }
-
-        cout << endl;
-    }
-    cout << endl;
-
 
     //--------------------------------------------------
     // populat insert map
@@ -219,15 +192,4 @@ pTable& LALR(grammar& g) {
         tmp->push_back(i);
     }
     //--------------------------------------------------
-    
-    cout << endl;
-    unordered_map<int, vector<int> >::iterator t;
-    for(t = insert.begin(); t != insert.end(); t++) {
-        cout << (char)(*t).first << " : ";
-
-        for(int i = 0; i < (*t).second.size(); i++) {
-            cout << (*t).second[i] << ", ";
-        }
-        cout << endl;
-    }
 }
