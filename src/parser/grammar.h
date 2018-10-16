@@ -17,8 +17,8 @@ using std::string;
 
 struct rule
 {
-    int rhs;
-    vector<unsigned int> lhs;
+    int lhs;
+    vector<unsigned int> rhs;
     void* (*action)(void** varBuf);
 };
 
@@ -27,7 +27,7 @@ class grammar
 public:
     grammar();
 
-    void addRule(int rhs, vector<unsigned int> lhs, void* (*action)(void** varBuf));
+    void addRule(int lhs, vector<unsigned int> rhs, void* (*action)(void** varBuf));
     rule getRule(int id);
     vector<rule> getRules();
 private:

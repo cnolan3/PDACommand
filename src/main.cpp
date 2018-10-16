@@ -43,22 +43,24 @@ int main() {
     pt.set(1, 9, 2, reduce);
 
     vector<unsigned int> s;
-    s.push_back(4);
-    s.push_back(4);
+    s.push_back('X');
+    s.push_back('X');
 
     grammar g;
-    g.addRule(3, s, t1);
+    g.addRule('S', s, t1);
 
     s.clear();
-    s.push_back(0);
-    s.push_back(4);
+    s.push_back('a');
+    s.push_back('X');
 
-    g.addRule(4, s, t2);
+    g.addRule('X', s, t2);
 
     s.clear();
-    s.push_back(1);
+    s.push_back('b');
 
-    g.addRule(4, s, t3);
+    g.addRule('X', s, t3);
+
+    LALR(g);
 
     FAtTable ft(17);
     ft.addTrans(0, 1, '\n');

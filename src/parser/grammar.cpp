@@ -19,7 +19,7 @@ grammar::grammar() {
  * @param    rhs right hand side of rule
  * @param    lhs left hand side of rule
 **/
-void grammar::addRule(int rhs, vector<unsigned int> lhs, void* (*action)(void** varBuf)) {
+void grammar::addRule(int lhs, vector<unsigned int> rhs, void* (*action)(void** varBuf)) {
     rule r;
     r.rhs = rhs;
     r.lhs = lhs;

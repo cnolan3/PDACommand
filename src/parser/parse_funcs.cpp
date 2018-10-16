@@ -6,12 +6,17 @@
 
 #include "parse_funcs.h"
 #include <climits>
+#include <list>
 #include <vector>
 #include <iostream>
+#include <unordered_map>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
 using std::vector;
+using std::unordered_map;
+using std::list;
 
 /**
  * run the parse table
@@ -78,10 +83,10 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
         }
         else if(m.type == reduce) {
             rule r = g.getRule(m.num);
-            void** varBuf = new void*[r.lhs.size()];
+            void** varBuf = new void*[r.rhs.size()];
 
-            for(int i = r.lhs.size() - 1; i >= 0; i--) {
-                if(r.lhs[i] == tStack.back().id) {
+            for(int i = r.rhs.size() - 1; i >= 0; i--) {
+                if(r.rhs[i] == tStack.back().id) {
                     varBuf[i] = tStack.back().val;
                     tStack.pop_back();
                     sStack.pop_back();
@@ -91,7 +96,7 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
             }
 
             token t;
-            t.id = r.rhs;
+            t.id = r.lhs;
             t.val = NULL;
 
             if(r.action)
@@ -123,24 +128,106 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
 **/
 pTable& LALR(grammar& g) {
     vector<rule> rules;
-    tokenType* types = new tokenType[UCHAR_MAX];
+    unordered_map<int, tokenType> types; // map each symbol to a tokenType
+    unordered_map<int, list<int> > first; // map the first symbols of each non-terminal
+    unordered_map<int, vector<int> > insert; // map which rules should be inserted based
+                                             // on which non-terminal is seen
     pTable* pt;
+    bool repeat = true;
 
+    //-----------------------------------------------
     // classify all symbols as terminal or nonterminal
-    for(int i = 0; i < UCHAR_MAX; i++) {
-        types[i] = empty;
-    }
-
     rules = g.getRules();
 
     for(int i = 0; i < rules.size(); i++) {
         rule r = rules[i];
 
-        types[r.rhs] = nonterminal;
+        types[r.lhs] = nonterminal;
         
-        for(int j = 0; j < r.lhs.size(); j++) {
-            if(types[r.lhs[j]] == empty)
-                types[r.lhs[j]] = terminal;
+        for(int j = 0; j < r.rhs.size(); j++) {
+            if(!types.count(r.rhs[j]))
+                types[r.rhs[j]] = terminal;
         }
+    }
+    //------------------------------------------------
+
+    unordered_map<int, tokenType>::iterator p;
+    for(p = types.begin(); p != types.end(); p++) {
+        cout << (char)(*p).first << " : ";
+
+        if((*p).second == nonterminal)
+            cout << "non-terminal";
+        else if((*p).second == terminal)
+            cout << "terminal";
+        else
+            cout << "error";
+
+        cout << endl;
+    }
+
+    //------------------------------------------------
+    // map first symbols
+    // initially place all first symbols into map
+    for(int i = 0; i < rules.size(); i++) {
+        rule r = rules[i];
+
+        list<int>* tmp = &first[r.lhs];
+        tmp->push_back(r.rhs[0]);
+    }
+
+    // replace all nonterminals in map
+    unordered_map<int, list<int> >::iterator it;
+    for(it = first.begin(); it != first.end(); it++) {
+        list<int>* tmpa = &(*it).second;
+        
+        list<int>::iterator tmpit;
+        for(tmpit = tmpa->begin(); tmpit != tmpa->end(); tmpit++) {
+            if(types[(*tmpit)] == nonterminal) {
+                list<int> tmpb = first[(*tmpit)];
+                tmpa->erase(tmpit);
+
+                list<int>::iterator listit;
+                for(listit = tmpb.begin(); listit != tmpb.end(); listit++) {
+                    tmpa->push_back((*listit));
+                }
+            }
+        }
+    }
+    //--------------------------------------------------
+
+    cout << endl;
+    unordered_map<int, list<int> >::iterator print;
+    for(print = first.begin(); print != first.end(); print++) {
+        cout << (char)(*print).first << " : ";
+
+        list<int>::iterator listit;
+        for(listit = (*print).second.begin(); listit != (*print).second.end(); listit++) {
+            cout << (char)(*listit) << ", ";
+        }
+
+        cout << endl;
+    }
+    cout << endl;
+
+
+    //--------------------------------------------------
+    // populat insert map
+    for(int i = 0; i < rules.size(); i++) {
+        rule r = rules[i];
+
+        vector<int>* tmp = &insert[r.lhs];
+        tmp->push_back(i);
+    }
+    //--------------------------------------------------
+    
+    cout << endl;
+    unordered_map<int, vector<int> >::iterator t;
+    for(t = insert.begin(); t != insert.end(); t++) {
+        cout << (char)(*t).first << " : ";
+
+        for(int i = 0; i < (*t).second.size(); i++) {
+            cout << (*t).second[i] << ", ";
+        }
+        cout << endl;
     }
 }

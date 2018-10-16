@@ -23,8 +23,7 @@ struct alphaToken
 enum tokenType
 {
     terminal,
-    nonterminal,
-    empty
+    nonterminal
 };
 
 #endif

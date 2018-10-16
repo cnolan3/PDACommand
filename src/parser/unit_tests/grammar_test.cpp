@@ -36,9 +36,9 @@ protected:
 TEST_F(grammarTest, get_single) {
     rule r = g.getRule(0);
 
-    EXPECT_EQ(r.rhs, 'A');
-    EXPECT_EQ(r.lhs[0], 'a');
-    EXPECT_EQ(r.lhs[1], 'a');
+    EXPECT_EQ(r.lhs, 'A');
+    EXPECT_EQ(r.rhs[0], 'a');
+    EXPECT_EQ(r.rhs[1], 'a');
     EXPECT_THAT(r.action, IsNull());
 }
 
@@ -47,13 +47,13 @@ TEST_F(grammarTest, get_all) {
 
     EXPECT_EQ(rules.size(), 2);
 
-    EXPECT_EQ(rules[0].rhs, 'A');
-    EXPECT_EQ(rules[0].lhs[0], 'a');
-    EXPECT_EQ(rules[0].lhs[1], 'a');
+    EXPECT_EQ(rules[0].lhs, 'A');
+    EXPECT_EQ(rules[0].rhs[0], 'a');
+    EXPECT_EQ(rules[0].rhs[1], 'a');
     EXPECT_THAT(rules[0].action, IsNull());
 
-    EXPECT_EQ(rules[1].rhs, 'B');
-    EXPECT_EQ(rules[1].lhs[0], 'g');
-    EXPECT_EQ(rules[1].lhs[1], 'A');
+    EXPECT_EQ(rules[1].lhs, 'B');
+    EXPECT_EQ(rules[1].rhs[0], 'g');
+    EXPECT_EQ(rules[1].rhs[1], 'A');
     EXPECT_THAT(rules[1].action, NotNull());
 }
