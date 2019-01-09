@@ -5,6 +5,7 @@
 **/
 
 #include "parse_funcs.h"
+#include "../util/constants.h"
 #include <climits>
 #include <list>
 #include <vector>
@@ -127,18 +128,79 @@ int runParse(pTable& pt, grammar& g, list<token>& input) {
  * @return   parse table from g
 **/
 pTable& LALR(grammar& g) {
-    vector<rule> rules;
+    vector<rule> rules = g.getRules();
     unordered_map<int, tokenType> types; // map each symbol to a tokenType
     unordered_map<int, list<int> > first; // map the first symbols of each non-terminal
     unordered_map<int, vector<int> > insert; // map which rules should be inserted based
                                              // on which non-terminal is seen
     pTable* pt;
     bool repeat = true;
+    rule start;
+
+    cout << "rules (0)" << endl;
+    for(int i = 0; i < rules.size(); i++) {
+        if(rules[i].lhs == SENTINEL)
+            cout << "S'";
+        else if(rules[i].lhs == END_SYM)
+            cout << "$";
+        else
+            cout << (char)rules[i].lhs;
+
+        cout << " -> ";
+
+        for(int j = 0; j < rules[i].rhs.size(); j++) {
+            cout << (char)rules[i].rhs[j];
+        }
+
+        cout << endl;
+    }
+    cout << endl;
+
+    //-----------------------------------------------
+    // add new start symbol
+    // ----------------------------------------------
+    start.lhs = SENTINEL;
+    start.action = NULL;
+
+    // find old start symbol
+    int old = rules[0].lhs;
+
+    for(int i = 0; i < rules.size(); i++) {
+        vector<unsigned int> rhs = rules[i].rhs;
+
+        for(int j = 0; j < rhs.size(); j++) {
+            if(rhs[j] == old)
+                old = rules[i].lhs;
+        }
+    }
+
+    start.rhs.push_back(old);
+
+    rules.push_back(start);
+    //-----------------------------------------------
+
+    cout << "rules (1)" << endl;
+    for(int i = 0; i < rules.size(); i++) {
+        if(rules[i].lhs == SENTINEL)
+            cout << "S'";
+        else if(rules[i].lhs == END_SYM)
+            cout << "$";
+        else
+            cout << (char)rules[i].lhs;
+
+        cout << " -> ";
+
+        for(int j = 0; j < rules[i].rhs.size(); j++) {
+            cout << (char)rules[i].rhs[j];
+        }
+
+        cout << endl;
+    }
+    cout << endl;
 
     //-----------------------------------------------
     // classify all symbols as terminal or nonterminal
-    rules = g.getRules();
-
+    // ----------------------------------------------
     for(int i = 0; i < rules.size(); i++) {
         rule r = rules[i];
 
@@ -151,9 +213,32 @@ pTable& LALR(grammar& g) {
     }
     //------------------------------------------------
 
+    cout << "terminal/non-terminal" << endl;
+    unordered_map<int, tokenType>::iterator typeit;
+    for(typeit = types.begin(); typeit != types.end(); typeit++) {
+        if((*typeit).first == SENTINEL)
+            cout << "S'";
+        else if((*typeit).first == END_SYM)
+            cout << "$";
+        else
+            cout << (char)(*typeit).first;
+        
+        cout << " : ";
+
+        if((*typeit).second == nonterminal)
+            cout << "non-terminal";
+        else if((*typeit).second == terminal)
+            cout << "terminal";
+        else
+            cout << "error";
+
+        cout << endl;
+    }
+    cout << endl;
 
     //------------------------------------------------
     // map first symbols
+    // -----------------------------------------------
     // initially place all first symbols into map
     for(int i = 0; i < rules.size(); i++) {
         rule r = rules[i];
@@ -164,27 +249,64 @@ pTable& LALR(grammar& g) {
 
     // replace all nonterminals in map
     unordered_map<int, list<int> >::iterator it;
-    for(it = first.begin(); it != first.end(); it++) {
-        list<int>* tmpa = &(*it).second;
-        
-        list<int>::iterator tmpit;
-        for(tmpit = tmpa->begin(); tmpit != tmpa->end(); tmpit++) {
-            if(types[(*tmpit)] == nonterminal) {
-                list<int> tmpb = first[(*tmpit)];
-                tmpa->erase(tmpit);
+    while(repeat) {
+        repeat = false;
 
-                list<int>::iterator listit;
-                for(listit = tmpb.begin(); listit != tmpb.end(); listit++) {
-                    tmpa->push_back((*listit));
+        for(it = first.begin(); it != first.end(); it++) {
+            list<int>* tmpa = &(*it).second;
+            
+            list<int>::iterator tmpit;
+            for(tmpit = tmpa->begin(); tmpit != tmpa->end(); tmpit++) {
+                if(types[(*tmpit)] == nonterminal) {
+                    repeat = true;
+                    list<int> tmpb = first[(*tmpit)];
+                    tmpa->erase(tmpit);
+
+                    list<int>::iterator listit;
+                    for(listit = tmpb.begin(); listit != tmpb.end(); listit++) {
+                        tmpa->push_back((*listit));
+                    }
                 }
             }
         }
     }
+
+    list<int>* tmp = &first[END_SYM];
+    tmp->push_back(END_SYM);
     //--------------------------------------------------
 
+    cout << "first" << endl;
+    unordered_map<int, list<int> >::iterator firstit;
+    for(firstit = first.begin(); firstit != first.end(); firstit++) {
+        if((*firstit).first == SENTINEL)
+            cout << "S'";
+        else if((*firstit).first == END_SYM)
+            cout << "$";
+        else
+            cout << (char)(*firstit).first;
+
+        cout << " : ";
+
+        list<int>::iterator tmpit;
+        list<int> tmp = (*firstit).second;
+        for(tmpit = tmp.begin(); tmpit != tmp.end(); tmpit++) {
+            if((*tmpit) == SENTINEL)
+                cout << "S'";
+            else if((*tmpit) == END_SYM)
+                cout << "$";
+            else
+                cout << (char)(*tmpit);
+            
+            cout << ", ";
+        }
+
+        cout << endl;
+    }
+    cout << endl;
 
     //--------------------------------------------------
     // populat insert map
+    // -------------------------------------------------
     for(int i = 0; i < rules.size(); i++) {
         rule r = rules[i];
 
@@ -192,4 +314,24 @@ pTable& LALR(grammar& g) {
         tmp->push_back(i);
     }
     //--------------------------------------------------
+    
+    cout << "insert" << endl;
+    unordered_map<int, vector<int> >::iterator init;
+    for(init = insert.begin(); init != insert.end(); init++) {
+        if((*init).first == SENTINEL)
+            cout << "S'";
+        else if((*init).first == END_SYM)
+            cout << "$";
+        else
+            cout << (char)(*init).first;
+
+        cout << " : ";
+
+        vector<int> tmp = (*init).second;
+        for(int i = 0; i < tmp.size(); i++) {
+            cout << tmp[i] << ", ";
+        }
+        cout << endl;
+    }
+    cout << endl;
 }

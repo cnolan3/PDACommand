@@ -17,7 +17,7 @@ using std::string;
 
 struct rule
 {
-    int lhs;
+    unsigned int lhs;
     vector<unsigned int> rhs;
     void* (*action)(void** varBuf);
 };

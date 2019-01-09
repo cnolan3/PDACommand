@@ -19,6 +19,7 @@ void* a(string text);
 void* b(string text);
 
 int main() {
+    /*
     pTable pt(10);
     pt.set(0, 0, 7, shift);
     pt.set(1, 0, 9, shift);
@@ -41,6 +42,7 @@ int main() {
     pt.set(1, 8, 1, reduce);
     pt.set(0, 9, 2, reduce);
     pt.set(1, 9, 2, reduce);
+    */
 
     vector<unsigned int> s;
     s.push_back('X');
@@ -62,6 +64,7 @@ int main() {
 
     LALR(g);
 
+    /*
     FAtTable ft(17);
     ft.addTrans(0, 1, '\n');
     ft.addTrans(0, 2, 32);
@@ -109,6 +112,7 @@ int main() {
     cout << endl;
 
     runParse(pt, g, tList); 
+    */
 }
 
 void* t1(void** varBuf) {
